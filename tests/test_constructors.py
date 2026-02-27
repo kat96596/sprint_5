@@ -1,40 +1,31 @@
 import pytest
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.common.by import By
 
-BASE_URL = "https://stellarburgers.education-services.ru"
+from urls import Urls
+from locators import ConstructorLocators
 
 
 class TestConstructor:
     
-    def test_navigate_to_buns_section(self, driver):
-        driver.get(BASE_URL)
-    
-        driver.find_element(By.XPATH, "//span[text()='Соусы']/parent::div").click()
+    @pytest.mark.parametrize("section_name, section_locator, expected_text", [
+        ("Булки", ConstructorLocators.BUNS_SECTION, "Булки"),
+        ("Соусы", ConstructorLocators.SAUCES_SECTION, "Соусы"),
+        ("Начинки", ConstructorLocators.FILLINGS_SECTION, "Начинки")
+    ])
+    def test_navigate_to_section(self, driver, section_name, section_locator, expected_text):
+        driver.get(Urls.BASE_URL)
         
-        # Небольшая задержка для анимации
-        WebDriverWait(driver, 3).until(
-            EC.element_to_be_clickable((By.XPATH, "//span[text()='Булки']/parent::div"))
-        )
+        if section_name == "Булки":
+            driver.find_element(*ConstructorLocators.SAUCES_SECTION).click()
+            
+            WebDriverWait(driver, 3).until(
+                EC.element_to_be_clickable(ConstructorLocators.BUNS_SECTION)
+            )
         
-        driver.find_element(By.XPATH, "//span[text()='Булки']/parent::div").click()
+        driver.find_element(*section_locator).click()        
+        # Получение активного раздела
+        active_section = driver.find_element(*ConstructorLocators.ACTIVE_SECTION)
         
-        active_section = driver.find_element(By.XPATH, "//div[contains(@class, 'tab_tab_type_current')]")
-        assert "Булки" in active_section.text
-    
-    def test_navigate_to_sauces_section(self, driver):
-        driver.get(BASE_URL)
-        
-        driver.find_element(By.XPATH, "//span[text()='Соусы']/parent::div").click()
-        
-        active_section = driver.find_element(By.XPATH, "//div[contains(@class, 'tab_tab_type_current')]")
-        assert "Соусы" in active_section.text
-    
-    def test_navigate_to_fillings_section(self, driver):
-        driver.get(BASE_URL)
-        
-        driver.find_element(By.XPATH, "//span[text()='Начинки']/parent::div").click()
-        
-        active_section = driver.find_element(By.XPATH, "//div[contains(@class, 'tab_tab_type_current')]")
-        assert "Начинки" in active_section.text
+        # Проверка, что активный раздел содержит ожидаемый текст
+        assert expected_text in active_section.text
