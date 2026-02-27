@@ -1,15 +1,6 @@
-class Urls:
-    BASE_URL = "https://stellarburgers.education-services.ru"
-    REGISTER_URL = f"{BASE_URL}/register"
-    LOGIN_URL = f"{BASE_URL}/login"
-    PROFILE_URL = f"{BASE_URL}/account/profile"
-    FORGOT_PASSWORD_URL = f"{BASE_URL}/forgot-password"
-
-
 class TestData:
     DEFAULT_USER_NAME = "Test User"
     
-    # Некорректные пароли для тестирования
     INVALID_PASSWORDS = [
         "12345",
         "abcde",
@@ -18,6 +9,7 @@ class TestData:
         "qwert",
         "!@#$%"
     ]
+    
     PASSWORD_ERROR_MESSAGE = "Некорректный пароль"
     
     LOGIN_PAGE_HEADER = "Вход"
