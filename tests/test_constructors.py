@@ -38,3 +38,4 @@ class TestConstructor:
         
         active_section = driver.find_element(*ConstructorLocators.ACTIVE_SECTION)
         assert "Начинки" in active_section.text
+
