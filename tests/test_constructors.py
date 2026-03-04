@@ -1,31 +1,40 @@
 import pytest
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.common.by import By
 
 from urls import Urls
 from locators import ConstructorLocators
 
 
 class TestConstructor:
-    
-    @pytest.mark.parametrize("section_name, section_locator, expected_text", [
-        ("Булки", ConstructorLocators.BUNS_SECTION, "Булки"),
-        ("Соусы", ConstructorLocators.SAUCES_SECTION, "Соусы"),
-        ("Начинки", ConstructorLocators.FILLINGS_SECTION, "Начинки")
-    ])
-    def test_navigate_to_section(self, driver, section_name, section_locator, expected_text):
+
+    def test_navigate_to_buns_section(self, driver):
         driver.get(Urls.BASE_URL)
         
-        if section_name == "Булки":
-            driver.find_element(*ConstructorLocators.SAUCES_SECTION).click()
-            
-            WebDriverWait(driver, 3).until(
-                EC.element_to_be_clickable(ConstructorLocators.BUNS_SECTION)
-            )
+        driver.find_element(*ConstructorLocators.SAUCES_SECTION).click()
         
-        driver.find_element(*section_locator).click()        
-        # Получение активного раздела
+        WebDriverWait(driver, 3).until(
+            EC.element_to_be_clickable(ConstructorLocators.BUNS_SECTION)
+        )
+        
+        driver.find_element(*ConstructorLocators.BUNS_SECTION).click()
+        
         active_section = driver.find_element(*ConstructorLocators.ACTIVE_SECTION)
+        assert "Булки" in active_section.text
+    
+    def test_navigate_to_sauces_section(self, driver):
+        driver.get(Urls.BASE_URL)
         
-        # Проверка, что активный раздел содержит ожидаемый текст
-        assert expected_text in active_section.text
+        driver.find_element(*ConstructorLocators.SAUCES_SECTION).click()
+        
+        active_section = driver.find_element(*ConstructorLocators.ACTIVE_SECTION)
+        assert "Соусы" in active_section.text
+    
+    def test_navigate_to_fillings_section(self, driver):
+        driver.get(Urls.BASE_URL)
+        
+        driver.find_element(*ConstructorLocators.FILLINGS_SECTION).click()
+        
+        active_section = driver.find_element(*ConstructorLocators.ACTIVE_SECTION)
+        assert "Начинки" in active_section.text
